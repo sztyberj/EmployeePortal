@@ -1,16 +1,13 @@
-import tkinter as tk
-from tkinter import *
-from PIL import ImageTk, Image
+
+from DatabaseConnection import *
+from main import *
 from window_init import *
-from tkcalendar import *
-from abc import ABC, abstractmethod
-import time
 
 
 class MainMenu:
     def __init__(self):
         root = tk.Tk()
-        windowinit = Window(root, 'Portal Pracownika', 700, 1200)
+        Window(root, 'Portal Pracownika', 700, 1200)
         root.resizable(True, True)
         root.minsize(900, 480)
         root.configure(background="#2A2828")
@@ -48,23 +45,24 @@ class MainMenu:
                             command=lambda: MainMenu.hide_bar(self, left_frame, content_frame, root, title_frame, icon, user_icon))
         iconButton.place(rely=0, relx=0)
 
-        userButton = Button(title_frame, width=30, highlightthickness=0, borderwidth=0, height=28,  image=user_icon)
+        userButton = Button(title_frame, width=30, highlightthickness=0, borderwidth=0, height=28,  image=user_icon, command=lambda: (print("CHUJOZA")))
         userButton.place(rely=0, relx=0.97)
+
         # ========= Work time button  ========= #
         work_time = Button(left_frame, width=30, height=3, bg='white', highlightthickness=0,
-                           activebackground='#FFC71E', command= lambda : MainMenu.show_work_time(self, content_frame),
+                           activebackground='orange', command= lambda : MainMenu.show_work_time(self, content_frame),
                            text='Czas pracy')
         work_time.pack()
 
         # ========= Contacts button  ========= #
         contacts = Button(left_frame, width=30, height=3, bg='white', highlightthickness=0,
-                          activebackground='#FFC71E',
+                          activebackground='orange',
                           text='Kontakty', command=lambda: MainMenu.show_contacts(self, content_frame))
         contacts.pack()
 
         # ========= Applications button  ========= #
         applications = Button(left_frame, width=30, height=3, bg='white', highlightthickness=0,
-                              activebackground='#FFC71E',
+                              activebackground='orange',
                               text='Wnioski', command=lambda: MainMenu.show_applications(self, content_frame))
         applications.pack()
 
@@ -94,7 +92,6 @@ class MainMenu:
         Window.ClearFrame(content_frame)
         add_app = Button(content_frame, bg='red', text='Dodaj wniosek')
         add_app.pack()
-
         delete_app = Button(content_frame, bg='red', text='Usuń wniosek')
         delete_app.pack(side=LEFT)
 
@@ -105,33 +102,81 @@ class MainMenu:
         cal = Calendar(content_frame, selectmode="day")
         cal.pack(anchor=NE, padx=20, pady=20)
 
+    def show_contacts(self, content_frame):
+        Window.ClearFrame(content_frame)
+        TableFrame = Frame(content_frame, width=500, height=300, bg="white")
+        TableFrame.pack(fill="both", expand=True, padx=40, pady=40)
+        e = Label(TableFrame, width=10, text='Imię', borderwidth=1, relief='ridge', anchor=N, bg='gray')
+        e.grid(row=0, column=0)
+        e = Label(TableFrame, width=20, text='Nazwisko', borderwidth=1, relief='ridge', anchor='w', bg='gray')
+        e.grid(row=0, column=1)
+        e = Label(TableFrame, width=20, text='Numer Telefonu', borderwidth=1, relief='ridge', anchor='w', bg='gray')
+        e.grid(row=0, column=2)
+        e = Label(TableFrame, width=20, text='E-mail', borderwidth=1, relief='ridge', anchor='w', bg='gray')
+        e.grid(row=0, column=3)
+        e = Label(TableFrame, width=25, text='Departament', borderwidth=1, relief='ridge', anchor='w', bg='gray')
+        e.grid(row=0, column=4)
+
+
+        MainMenu.print_data(DatabaseConnection.sqlQuery.SelectContacts(), content_frame)
+
     def show_work_time(self, content_frame):
         Window.ClearFrame(content_frame)
-        add_work_time = Button(content_frame, bg='red', text='Dodaj czas pracy')
-        add_work_time.place(relx=0.5, rely=0.1)
+        # ========= Calendar components ========= #
+
+        add_work_time = Button(content_frame, text='Dodaj czas pracy', activebackground='orange', width=11)
+        Calendar(content_frame).place(relx=0.07, rely=0.1)
+        hours = Scale(content_frame, from_=0, to=14, orient=HORIZONTAL, bg='white', activebackground='orange', border=0)
+        hours.place(relx=0.07, rely=0.49)
+        add_work_time.place(relx=0.2, rely=0.5)
+
+        # ========= Work table  ========= #
+        date = Label(content_frame, width=20, text='Data', borderwidth=1, relief='ridge', anchor=N, bg='gray')
+        date.place(relx=0.6, rely=0.1)
+        hours = Label(content_frame, width=20, text='Czas', borderwidth=1, relief='ridge', anchor='w', bg='gray')
+        hours.place(relx=0.76, rely=0.1)
+
+
+    def show_user_management(self, content_frame):
+        Window.ClearFrame(content_frame)
+
+        TableFrame = Frame(content_frame, width=250, height=300, bg="white")
+        TableFrame.pack(fill="both", expand=True, padx=40, pady=40)
+        e = Label(TableFrame, width=10, text='Imię', borderwidth=1, relief='ridge', anchor=N, bg='gray')
+        e.grid(row=0, column=0)
+        e = Label(TableFrame, width=10, text='Nazwisko', borderwidth=1, relief='ridge', anchor='w', bg='gray')
+        e.grid(row=0, column=1)
+        e = Label(TableFrame, width=10, text='Telefon', borderwidth=1, relief='ridge', anchor='w', bg='gray')
+        e.grid(row=0, column=2)
+        e = Label(TableFrame, width=10, text='E-mail', borderwidth=1, relief='ridge', anchor='w', bg='gray')
+        e.grid(row=0, column=3)
+        e = Label(TableFrame, width=15, text='Departament', borderwidth=1, relief='ridge', anchor='w', bg='gray')
+        e.grid(row=0, column=4)
+
+        add_button = Button(content_frame, width=3, height=2, bg='blue')
+        add_button.pack()
+
+        edit_button = Button(content_frame, width=3, height=2, bg='blue')
+        edit_button.pack()
+
 
     def show_adminPanel(self, content_frame):
         Window.ClearFrame(content_frame)
-        add_work_time = Button(content_frame, bg='red', text='Ustawienia')
-        add_work_time.place(relx=0.5, rely=0.1)
+        user_management = Button(content_frame, width=20, height=10, bg='red', text='Zarządzanie pracownikami', command=lambda: MainMenu.show_user_management(self, content_frame))
+        user_management.grid(row=0, column=0, padx=20, pady=10)
+
+        deparment_management = Button(content_frame, width=20, height=10, bg='blue', text='Zarządzanie działami')
+        deparment_management.grid(row=0, column=1)
 
 
-    def show_contacts(self, content_frame):
-        Window.ClearFrame(content_frame)
-        """
-        def ShowContact():
-            SelectSQL('[SalesLT].[Customer]')
-            for j in range(len(contact)):
-                e = tk.Entry(content_frame, width=150, fg='blue')
-                e.pack(anchor=NW)
-                e.insert(END, contact[j])
-                e.config(state='disabled')
-        """
-        add_work_time = Button(content_frame, bg='red', text='Kontakty')
-        add_work_time.place(relx=0.5, rely=0.1)
 
 
-run = MainMenu()
+    def print_data(self, z, content_frame):
+        print(z)
+
+
+if __name__ == '__main__':
+    run = MainMenu()
 
 
 

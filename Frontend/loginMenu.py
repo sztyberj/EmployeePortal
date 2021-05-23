@@ -1,9 +1,8 @@
-from window_init import *
-import tkinter as tk
-from tkinter import *
-from mainMenu import *
+import DatabaseConnection.dbConnect
+from main import *
+from DatabaseConnection.dbConnect import *
 from Backend.login import *
-
+from window_init import *
 
 class LoginMenu:
     def __init__(self):
@@ -13,6 +12,7 @@ class LoginMenu:
         main_frame = Frame(root, width=330, height=400, bg="#2A2828").place(relx=0, rely=0)
         LoginMenu.CreateLoginMenu(self, root, main_frame)
         root.mainloop()
+
 
 
     def CreateLoginMenu(self, root, main_frame):
@@ -30,7 +30,7 @@ class LoginMenu:
                                  command=lambda: LoginMenu.RememberPassword(self, root, main_frame))
 
         button_login = Button(main_frame, text="Zaloguj się", width=9, height=2, bg='orange', fg="#2A2828",
-                              activebackground='#840707', command=lambda: Login.logIn(entry_login, entry_password))
+                              activebackground='#840707', highlightthickness=0, command=lambda: logIn(entry_login, entry_password))
 
         label_login.place(relx=0.05, rely=0.28)
         entry_login.place(relx=0.35, rely=0.3)
@@ -50,11 +50,12 @@ class LoginMenu:
         Window.ClearFrame(root)
         root.configure(background="#2A2828")
         root.title('Zapomniałem hasła')
-
+        infoFont = Font(size=8)
+        emailFont = Font(size=9)
         label_info = Label(main_frame, text="Na podany adres e-mail zostanie wysłane nowe hasło.",
-                            width=40, height=2, bg="#2A2828", fg='orange').place(relx=0.1, rely=0.2)
+                            width=45, height=2, font=infoFont, bg="#2A2828", fg='orange').place(relx=0.015, rely=0.2)
 
-        label_email = Label(main_frame, text="Adres e-mail: ", width=10, height=2, bg="#2A2828", fg='orange').place(relx=0.12, rely=0.38)
+        label_email = Label(main_frame, text="Adres e-mail: ", width=10, height=2, bg="#2A2828", font=emailFont, fg='orange').place(relx=0.09, rely=0.39)
 
         entry_email = Entry(main_frame, width=20, borderwidth=1, highlightthickness=0, bg="orange").place(relx=0.35, rely=0.4)
 
@@ -66,7 +67,7 @@ class LoginMenu:
 
 
 
-
-
+if __name__ == '__main__':
+    new = LoginMenu()
 
 

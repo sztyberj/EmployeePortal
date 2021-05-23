@@ -1,3 +1,4 @@
+from main import *
 # ======= Init for create windows ======= #
 class Window:
     def __init__(self, root, title, h=0, w=0):
@@ -34,6 +35,3 @@ class Window:
 
         return combined_func
 
-    def RunMenu(self, root, menu):
-        root.destroy()
-        main = menu

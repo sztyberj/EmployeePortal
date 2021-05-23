@@ -1,33 +1,28 @@
-from _tkinter import *
-from tkinter.ttk import *
-from tkinter.font import *
-import tkinter as tk
+from main import *
 import time
-from window_init import *
-from loginMenu import *
 
 
 class LoadingWindow:
     def __init__(self):
-        self.mainroot = tk.Tk()
+        root = tk.Tk()
 
         # True - hide main bar window
-        self.mainroot.overrideredirect(1)
+        root.overrideredirect(1)
 
-        OpenWindow = Window(self.mainroot, '', 250, 400)
+        Window(root, '', 250, 400)
 
-        self.mainroot.resizable(False, False)
-        self.mainroot.configure(background='#2A2828')
+        root.resizable(False, False)
+        root.configure(background='#2A2828')
 
         canvas_width = 400
-        canvas = Canvas(self.mainroot, width=canvas_width, height=30, background='#2A2828', bd=0, highlightthickness=0, relief='ridge')
+        canvas = Canvas(root, width=canvas_width, height=30, background='#2A2828', bd=0, highlightthickness=0, relief='ridge')
 
         Tittle = 'Portal pracownika'
         TittleFont = Font(family="Helvetica", size=25, weight="bold")
         FootFont = Font(size=10)
 
-        MainBar = Label(self.mainroot, width=16, background="#2A2828", text=Tittle, font=TittleFont, foreground='orange')
-        FootBar = Label(self.mainroot, background="#2A2828", text="Created by Jakub Sztyber", foreground='white', font=FootFont)
+        MainBar = Label(root, width=16, background="#2A2828", text=Tittle, font=TittleFont, foreground='orange')
+        FootBar = Label(root, background="#2A2828", text="Created by Jakub Sztyber", foreground='white', font=FootFont)
 
 
         rectangle = canvas.create_rectangle(50, 50,  0, 0, outline='orange',fill='orange')
@@ -37,8 +32,8 @@ class LoadingWindow:
         MainBar.place(relx=0.15, rely=0.25)
         FootBar.place(relx=0.55, rely=0.85)
 
-        LoadingWindow.LoadingAnimation(self, rectangle, canvas, self.mainroot)
-        self.mainroot.mainloop()
+        LoadingWindow.LoadingAnimation(self, rectangle, canvas, root)
+        root.mainloop()
         login_menu = LoginMenu()
 
 

@@ -1,7 +1,5 @@
-class Employee:
-    def __init__(self, id, userid, firstname, lastname, email, phone, department):
-        self.id = id
-        self.userid = userid
+class Person:
+    def __init__(self, firstname='jan', lastname='kowalski', email='jkowal@', phone=123456789, department='HR'):
         self.firstname = firstname
         self.lastname = lastname
         self.email = email
