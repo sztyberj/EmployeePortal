@@ -1,4 +1,3 @@
-from main import *
 # ======= Init for create windows ======= #
 class Window:
     def __init__(self, root, title, h=0, w=0):

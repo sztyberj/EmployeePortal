@@ -53,6 +53,6 @@ class LoadingWindow:
             mainroot.update()
         mainroot.destroy()
 
-
-OpenWindow = LoadingWindow()
+if __name__ == '__main__':
+    OpenWindow = LoadingWindow()
 
