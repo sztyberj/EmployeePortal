@@ -4,54 +4,54 @@ import time
 
 class LoadingWindow:
     def __init__(self):
-        root = tk.Tk()
+        self.root = tk.Tk()
 
         # True - hide main bar window
-        root.overrideredirect(1)
+        self.root.overrideredirect(1)
 
-        Window(root, '', 250, 400)
+        Window(self.root, '', 250, 400)
 
-        root.resizable(False, False)
-        root.configure(background='#2A2828')
+        self.root.resizable(False, False)
+        self.root.configure(background='#2A2828')
 
-        canvas_width = 400
-        canvas = Canvas(root, width=canvas_width, height=30, background='#2A2828', bd=0, highlightthickness=0, relief='ridge')
+        self.canvas_width = 400
+        self.canvas = tk.Canvas(self.root, width=self.canvas_width, height=30, background='#2A2828', bd=0, highlightthickness=0, relief='ridge')
 
-        Tittle = 'Portal pracownika'
-        TittleFont = Font(family="Helvetica", size=25, weight="bold")
-        FootFont = Font(size=10)
+        self.Tittle = 'Portal pracownika'
+        self.TittleFont = tk.Font(family="Helvetica", size=25, weight="bold")
+        self.FootFont = tk.Font(size=10)
 
-        MainBar = Label(root, width=16, background="#2A2828", text=Tittle, font=TittleFont, foreground='orange')
-        FootBar = Label(root, background="#2A2828", text="Created by Jakub Sztyber", foreground='white', font=FootFont)
-
-
-        rectangle = canvas.create_rectangle(50, 50,  0, 0, outline='orange',fill='orange')
+        self.MainBar = tk.Label(self.root, width=16, background="#2A2828", text=self.Tittle, font=self.TittleFont, foreground='orange')
+        self.FootBar = tk.Label(self.root, background="#2A2828", text="Created by Jakub Sztyber", foreground='white', font=self.FootFont)
 
 
-        canvas.place(relx=0, rely=0.6)
-        MainBar.place(relx=0.15, rely=0.25)
-        FootBar.place(relx=0.55, rely=0.85)
-
-        LoadingWindow.LoadingAnimation(self, rectangle, canvas, root)
-        root.mainloop()
-        login_menu = LoginMenu()
+        self.rectangle = self.canvas.create_rectangle(50, 50,  0, 0, outline='orange',fill='orange')
 
 
-    def LoadingAnimation(self, rectangle, canvas, mainroot):
+        self.canvas.place(relx=0, rely=0.6)
+        self.MainBar.place(relx=0.15, rely=0.25)
+        self.FootBar.place(relx=0.55, rely=0.85)
+
+        LoadingWindow.LoadingAnimation(self)
+        self.root.mainloop()
+        self.login_menu = LoginMenu()
+
+
+    def LoadingAnimation(self):
 
         for x in range(70):
             xspeed = 5
             yspeed = 0
-            canvas.move(rectangle, xspeed, yspeed)
+            self.canvas.move(self.rectangle, xspeed, yspeed)
             time.sleep(0.03)
-            mainroot.update()
+            self.root.update()
         for y in range(70):
             xspeed = -5
             yspeed = 0
-            canvas.move(rectangle, xspeed, yspeed)
+            self.canvas.move(self.rectangle, xspeed, yspeed)
             time.sleep(0.03)
-            mainroot.update()
-        mainroot.destroy()
+            self.root.update()
+        self.root.destroy()
 
 if __name__ == '__main__':
     OpenWindow = LoadingWindow()

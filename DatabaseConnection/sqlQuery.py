@@ -1,5 +1,5 @@
 from main import *
-from dbConnect import conn
+from dbConnect import cursor
 
 class SqlQuery:
 

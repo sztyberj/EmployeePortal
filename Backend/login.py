@@ -13,8 +13,10 @@ class Login:
         results = cursor.fetchall()
         if results:
             MainMenu()
+            actual_login = results[0]
         else:
             tkinter.messagebox.showerror('Błąd', "Niepoprawny login lub hasło")
+
 
     def send_reset_pass(self, address_entry):
         address = address_entry.get()
