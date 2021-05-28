@@ -1,29 +1,31 @@
-from DatabaseConnection.dbConnect import *
-from logPassGenerator import *
-from emailSender import *
-from Frontend.mainMenu import *
-from main import *
+import loginMenu
+from mainMenu import MainMenu
+from dbConnect import DatabaseConnector
+from tkinter import messagebox
+from person import Person
+from logPassGenerator import LogPassGenerator
+from emailSender import Sender
 
 class Login:
 
     def logIn(l, p):
         login = l.get()
         password = p.get()
-        cursor.execute("SELECT UserLogin, UserPassword FROM [dbo].[AppUser] WHERE UserLogin ='"+ login +"' AND UserPassword ='" + password + "'")
-        results = cursor.fetchall()
-        if results:
-            MainMenu()
-            actual_login = results[0]
-        else:
-            tkinter.messagebox.showerror('Błąd', "Niepoprawny login lub hasło")
-
+        select = DatabaseConnector.select_user(DatabaseConnector, Person, Person.UserLogin==login, Person.UserPassword==password)
+        for x in select:
+            if x.UserLogin == login and  x.UserPassword == password:
+                del loginMenu.LoginMenu
+                MainMenu()
+            else:
+                messagebox.showerror('Nieudana próba logowania', 'Nieprawidłowy login lub hasło!')
 
     def send_reset_pass(self, address_entry):
         address = address_entry.get()
-        result = SqlQuery.Select(self, "SELECT UserID, Email FROM Person WHERE Email = ", address)
+        result = DatabaseConnector.select(DatabaseConnector, Person, Person.Email==address).one()
         if result:
-            new_pass = LogPassGenerator.GeneratePassword(self)
+            new_pass = LogPassGenerator.GeneratePassword(LogPassGenerator)
             Sender(address, "Reset hasła", "Nowe hasło to: " + new_pass)
-            SqlQuery.Update(self, "UPDATE AppUser SET UserPassword = '"+new_pass+"' FROM  Person WHERE Person.Email = '"+address+"' AND Person.UserID = AppUser.ID")
+            result.UserPassword
+            DatabaseConnector.update_password(Person, )
         else:
-            tkinter.messagebox.showerror('Błąd', "Podany adres e-mail nie istnieje w bazie.")
+            messagebox.showerror('Błąd', "Podany adres e-mail nie istnieje w bazie.")

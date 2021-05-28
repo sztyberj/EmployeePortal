@@ -1,7 +1,15 @@
+from window_init import Window
+from tkinter import *
+from tkinter import Image, ttk
+from dbConnect import DatabaseConnector
+from logPassGenerator import LogPassGenerator
+from emailSender import Sender
+from person import Person
+import PIL.ImageTk
+import tkcalendar
 import fileSystem
-from  main import *
-from window_init import *
-from Backend.fileSystem import *
+
+
 
 #DO ZROBIENIA JUTRO! WIDOK USERA, WYSTARCZY ZMIANA HASŁA.
 #SELECTY DO KONTAKTÓW I PANELU ADMINA
@@ -9,7 +17,7 @@ from Backend.fileSystem import *
 
 class MainMenu:
     def __init__(self):
-        self.root = tk.Tk()
+        self.root = Toplevel()
         new = Window(self.root, 'Portal Pracownika', 700, 1200)
         self.root.resizable(True, True)
         self.root.minsize(1100, 520)
@@ -20,18 +28,23 @@ class MainMenu:
         self.main_title = Label(self.title_frame, text='Portal Pracownika', foreground='red')
         self.main_title.pack(side= LEFT, anchor=N)
 
-        self.img = Image.open(r"/home/jakub/Desktop/Employee Portal (JIPP sem. 4 Project)/icon.png")
-        self.img = self.img.resize((32, 32), Image.ANTIALIAS)
-        self.icon = ImageTk.PhotoImage(self.img)
-
-        self.img1 = Image.open(r"/home/jakub/Desktop/Employee Portal (JIPP sem. 4 Project)/user.png")
-        self.img1 = self.img1.resize((32, 32), Image.ANTIALIAS)
-        self.user_icon = ImageTk.PhotoImage(self.img1)
-
         self.content_frame = Frame(self.root, width=700, height=450, bg="white")
         self.content_frame.pack(side=RIGHT, fill="both", expand=True, padx=20, pady=20)
         self.left_frame = Frame(self.root, width=400, height=600, bg='white')
         self.left_frame.pack(side=LEFT, pady=20, anchor=NW)
+
+
+        self.img = PIL.Image.open(r"/home/jakub/Desktop/Employee Portal (JIPP sem. 4 Project)/icon.png")
+        self.img = self.img.resize((32, 32), PIL.Image.ANTIALIAS)
+        self.icon = PIL.ImageTk.PhotoImage(self.img)
+
+        self.delete = PIL.Image.open(r"/home/jakub/Desktop/Employee Portal (JIPP sem. 4 Project)/trash.png")
+        self.delete = self.delete.resize((32, 32), PIL.Image.ANTIALIAS)
+        self.delete_icon = PIL.ImageTk.PhotoImage(self.delete)
+
+        self.img1 = PIL.Image.open(r"/home/jakub/Desktop/Employee Portal (JIPP sem. 4 Project)/user.png")
+        self.img1 = self.img1.resize((32, 32), PIL.Image.ANTIALIAS)
+        self.user_icon = PIL.ImageTk.PhotoImage(self.img1)
 
         MainMenu.create_left_frame_buttons(self)
         MainMenu.show_contacts(self)
@@ -79,9 +92,10 @@ class MainMenu:
 
     def hide_bar(self):
         self.left_frame.pack_forget()
+        self.left_frame.config(width=5)
         Window.ClearFrame(self.title_frame)
-        left_frame = Frame(self.root, width=5, height=25, bg="#2A2828")
-        left_frame.pack(pady=20, anchor=NW)
+        self.left_frame = Frame(self.root, width=5, height=25, bg="#2A2828")
+        self.left_frame.pack(pady=20, anchor=NW)
         iconButton = Button(self.title_frame, highlightthickness=0, borderwidth=0, bd=0, width=30, height=30, image=self.icon,
                             command=lambda: MainMenu.create_left_frame_buttons(self))
         iconButton.place(rely=0, relx=0)
@@ -103,33 +117,32 @@ class MainMenu:
     def show_contacts(self):
         Window.ClearFrame(self.content_frame)
 
-        contacts_tree = Treeview(self.content_frame, height=20)
-        contacts_tree['columns'] = ("Imie", "Nazwisko", "Telefon", "Email", "Departament")
+        contacts_tree = ttk.Treeview(self.content_frame, height=20)
+        contacts_tree['columns'] = ("Imie", "Nazwisko", "Telefon", "Email")
 
         contacts_tree.column("#0", width=0)
         contacts_tree.column("Imie", anchor="center", width=50)
         contacts_tree.column("Nazwisko", anchor="center", width=50)
         contacts_tree.column("Email", anchor="center", width=50)
         contacts_tree.column("Telefon", anchor="center", width=50)
-        contacts_tree.column("Departament", anchor="center", width=100)
+
 
         contacts_tree.heading("#0", text='')
         contacts_tree.heading("Imie", text="Imie", anchor="center")
         contacts_tree.heading("Nazwisko", text="Nazwisko", anchor="center")
         contacts_tree.heading("Email", text="Telefon", anchor="center")
         contacts_tree.heading("Telefon", text="Email", anchor="center")
-        contacts_tree.heading("Departament", text="Departament", anchor="center")
+
 
         contacts_tree['show'] = 'headings'
 
         contacts_tree.pack(pady=20, padx=20, fill="both", expand=True)
 
+        cont = DatabaseConnector.select_contacts(DatabaseConnector, Person)
 
-        contacts = SqlQuery.SelectContacts(self)
-
-        for x in contacts:
+        for x in cont:
             contacts_tree.insert(parent='', index='end', iid=x[0],
-                             values=(x[1], x[2], x[3], x[4], x[5]))
+                                 values=(x[1], x[2], x[3], x[4]))
 
 
 
@@ -139,7 +152,7 @@ class MainMenu:
         # ========= Calendar components ========= #
 
         add_work_time = Button(self.content_frame, text='Dodaj czas pracy', activebackground='orange', width=11, height=1, command=lambda: add_time(0))
-        calendar = Calendar(self.content_frame).place(relx=0.1, rely=0.1)
+        calendar = tkcalendar.Calendar(self.content_frame).place(relx=0.1, rely=0.1)
         hours = Scale(self.content_frame, from_=0, to=14, orient=HORIZONTAL, bg='white', activebackground='orange', border=0)
         hours.place(relx=0.1, rely=0.5)
         add_work_time.place(relx=0.1, rely=0.7)
@@ -158,7 +171,7 @@ class MainMenu:
 
         # ========= Work table  ========= #
 
-        work_tree = Treeview(self.content_frame, height=20)
+        work_tree = ttk.Treeview(self.content_frame, height=20)
         work_tree['columns'] = ("Data", "Czas")
 
         work_tree.column("#0", width=0)
@@ -181,7 +194,7 @@ class MainMenu:
         user_m_Frame.pack(fill=Y, side = RIGHT, pady=40, padx=20)
 
         contacts_tree = ttk.Treeview(self.content_frame, height=20)
-        contacts_tree['columns'] = ("Imie", "Nazwisko", "Telefon", "Email", "Departament")
+        contacts_tree['columns'] = ("Imie", "Nazwisko", "Telefon", "Email")
 
 
 
@@ -190,59 +203,55 @@ class MainMenu:
         contacts_tree.column("Nazwisko", anchor="center", width=50)
         contacts_tree.column("Email", anchor="center", width=70)
         contacts_tree.column("Telefon", anchor="center", width=50)
-        contacts_tree.column("Departament", anchor="center", width=100)
+
 
         contacts_tree.heading("#0", text='')
         contacts_tree.heading("Imie", text="Imie", anchor="center")
         contacts_tree.heading("Nazwisko", text="Nazwisko", anchor="center")
         contacts_tree.heading("Email", text="Telefon", anchor="center")
         contacts_tree.heading("Telefon", text="Email", anchor="center")
-        contacts_tree.heading("Departament", text="Departament", anchor="center")
+
 
 
         contacts_tree['show'] = 'headings'
 
-        contacts = SqlQuery.SelectContacts(self)
+        cont = DatabaseConnector.select_contacts(DatabaseConnector, Person)
 
-        for x in contacts:
+        for x in cont:
             contacts_tree.insert(parent='', index='end', iid=x[0],
-                                 values=(x[1], x[2], x[3], x[4], x[5]))
+                                 values=(x[1], x[2], x[3], x[4]))
 
 
 
         contacts_tree.pack(pady=20, padx=20, fill="both", expand=True)
 
-        add_button = Button(user_m_Frame, width=5, height=2, bg='green', text="Zatwierdź")
+        add_button = Button(user_m_Frame, width=6, height=2, bg='green', text="Zatwierdź")
         add_button.grid(row=6, column=0,pady=90, padx=10)
 
-        delete = Image.open(r"/home/jakub/Desktop/Employee Portal (JIPP sem. 4 Project)/trash.png")
-        delete = self.img1.resize((50, 30), Image.ANTIALIAS)
-        delete_icon = ImageTk.PhotoImage(self.img1)
-
-        clear_button = Button(user_m_Frame, width=5, height=2, bg='red', text = "Usuń")
+        clear_button = Button(user_m_Frame, width=6, height=2, bg='red', text = "Usuń")
         clear_button.grid(row=6, column=1, padx=10)
 
-        delete_button = Button(user_m_Frame, width=50, height=50, image=delete_icon)
+        delete_button = Button(user_m_Frame, width=70, height=40, image=self.delete_icon)
         delete_button.grid(row=6, column=2, padx=10)
 
         fname = Entry(user_m_Frame, bg='white', foreground='#2A2828')
         sname = Entry(user_m_Frame, bg='white', foreground='#2A2828')
         phone = Entry(user_m_Frame, bg='white', foreground='#2A2828')
         email = Entry(user_m_Frame, bg='white', foreground='#2A2828')
-        department = Entry(user_m_Frame, bg='white', foreground='#2A2828')
+
 
         fname.grid(row=1, column=2, pady=10, padx=10)
         sname.grid(row=2, column=2, pady=10, padx=10)
         phone.grid(row=3, column=2, pady=10, padx=10)
         email.grid(row=4, column=2, pady=10, padx=10)
-        department.grid(row=5, column=2, pady=10, padx=10)
+
 
 
         fname_l = Label(user_m_Frame, text='Imie: ', bg='white', foreground='#2A2828', width=15).grid(row=1, column=0, columnspan=2, pady=10)
         sname_l = Label(user_m_Frame, text='Nazwisko: ', bg='white', foreground='#2A2828', width=18).grid(row=2, column=0, columnspan=2, pady=10, padx=10)
         phone_l = Label(user_m_Frame, text='Telefon: ', bg='white', foreground='#2A2828', width=20).grid(row=3, column=0, columnspan=2, pady=10, padx=10)
         email_l = Label(user_m_Frame, text='Email: ', bg='white', foreground='#2A2828', width=22).grid(row=4, column=0, columnspan=2, pady=10, padx=10)
-        department_l = Label(user_m_Frame, text='Dep: ', bg='white', foreground='#2A2828', width=23).grid(row=5, column=0, columnspan=2, pady=10, padx=10)
+
 
         def selectItem(a):
             lst = []
@@ -252,15 +261,36 @@ class MainMenu:
             sname.delete(0, 'end')
             phone.delete(0, 'end')
             email.delete(0, 'end')
-            department.delete(0, 'end')
+
 
             fname.insert(0, lst[0])
             sname.insert(1, lst[1])
             phone.insert(2, lst[2])
             email.insert(3, lst[3])
-            department.insert(4, lst[4])
+
+        def clear(b):
+            fname.delete(0, 'end')
+            sname.delete(0, 'end')
+            phone.delete(0, 'end')
+            email.delete(0, 'end')
+
+        def insert(c):
+            firstname = fname.get()
+            sndname = sname.get()
+            phone_number = phone.get()
+            email_get = email.get()
+            password = LogPassGenerator.GeneratePassword(LogPassGenerator)
+            login = LogPassGenerator.GenerateLogin(LogPassGenerator, firstname, sndname)
+
+            person = Person(login, password, firstname, sndname, phone_number, email_get, 1)
+            DatabaseConnector.insert_data(DatabaseConnector, person)
+
+            Sender(email_get, 'Nowe konto', 'Witamy wśród użytkowników Potalu Pracownika. Oto twoje dane do logowania. Login: '+login+' Hasło: '+password)
+
 
         contacts_tree.bind('<ButtonRelease-1>', selectItem)
+        clear_button.bind('<ButtonRelease-1>', clear)
+        add_button.bind('<ButtonRelease-1>', insert)
 
     def show_adminPanel(self):
         Window.ClearFrame(self.content_frame)

@@ -1,10 +1,13 @@
-from main import *
+from tkinter import *
+from tkinter import font
+from window_init import Window
+from loginMenu import LoginMenu
 import time
 
 
 class LoadingWindow:
     def __init__(self):
-        self.root = tk.Tk()
+        self.root = Tk()
 
         # True - hide main bar window
         self.root.overrideredirect(1)
@@ -15,14 +18,14 @@ class LoadingWindow:
         self.root.configure(background='#2A2828')
 
         self.canvas_width = 400
-        self.canvas = tk.Canvas(self.root, width=self.canvas_width, height=30, background='#2A2828', bd=0, highlightthickness=0, relief='ridge')
+        self.canvas = Canvas(self.root, width=self.canvas_width, height=30, background='#2A2828', bd=0, highlightthickness=0, relief='ridge')
 
         self.Tittle = 'Portal pracownika'
-        self.TittleFont = tk.Font(family="Helvetica", size=25, weight="bold")
-        self.FootFont = tk.Font(size=10)
+        self.TittleFont = font.Font(family="Helvetica", size=25, weight="bold")
+        self.FootFont = font.Font(size=10)
 
-        self.MainBar = tk.Label(self.root, width=16, background="#2A2828", text=self.Tittle, font=self.TittleFont, foreground='orange')
-        self.FootBar = tk.Label(self.root, background="#2A2828", text="Created by Jakub Sztyber", foreground='white', font=self.FootFont)
+        self.MainBar = Label(self.root, width=16, background="#2A2828", text=self.Tittle, font=self.TittleFont, foreground='orange')
+        self.FootBar = Label(self.root, background="#2A2828", text="Created by Jakub Sztyber", foreground='white', font=self.FootFont)
 
 
         self.rectangle = self.canvas.create_rectangle(50, 50,  0, 0, outline='orange',fill='orange')
