@@ -1,12 +1,6 @@
 # EmployeePortal
 
-Desktop app created with Tkinter. The application uses Azure SQL Database. 
+Desktopowa aplikacja stworzona za pomocą Tkinter, dane przechowywane są w Azure SQL Database.
 
-Plans for the future:
-- 3 roles of user (Admin, Manager, User)
-- Files system in Azure
-- Export views into csv etc.
-- And More
+Projekt niekompletny.
 
-
-Work in progress...
